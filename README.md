@@ -1,27 +1,34 @@
-# -NginxProxyManager
- NginxProxyManager Setup
+# 🚀 Nginx Proxy Manager Deployment & Management Guide
 
+![Docker](https://img.shields.io/badge/Docker-2026-blue?style=for-the-badge&logo=docker)
+![Nginx Proxy Manager](https://img.shields.io/badge/Nginx_Proxy_Manager-Latest-brightgreen?style=for-the-badge&logo=nginx)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+[![Visitor Count](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fsohag1192%2FNginxProxyManager&count_bg=%23007EC6&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Hits%2FViews&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ---
 
-# 🚀 Nginx Proxy Manager Deployment Guide
+## ⚡ Quick One-Line Automated Installation
+If you are on a fresh Debian/Ubuntu server, you can run the automated setup script directly:
 
-## 1. Install Docker
 ```bash
-sudo su
-sudo apt update
-sudo apt install ca-certificates curl -y
+curl -fsSL https://raw.githubusercontent.com/sohag1192/NginxProxyManager/main/install-npm.sh | sudo bash
 ```
 
-### Add Docker’s official GPG key
+---
+
+## 🛠️ Manual Step-by-Step Installation
+
+### 1. Install Docker & Docker Compose
 ```bash
+sudo apt update
+sudo apt install ca-certificates curl gnupg -y
+
+# Add Docker's official GPG key
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
-```
 
-### Add Docker repository
-```bash
+# Add Docker repository
 sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/debian
@@ -29,81 +36,92 @@ Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
 Components: stable
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
-```
 
-### Install Docker
-```bash
+# Install Docker packages
 sudo apt update
-sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
-```
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-### Add user to Docker group
-```bash
+# Add current user to docker group
 sudo usermod -aG docker $USER
-logout
 ```
 
 ---
 
-## 2. Verify Docker Installation
+### 2. Clone Repository & Deploy
+
+```bash
+git clone https://github.com/sohag1192/NginxProxyManager.git
+cd NginxProxyManager/
+docker compose pull
+docker compose up -d
+```
+
+Check running status:
 ```bash
 docker ps -a
 ```
 
 ---
 
-## 3. Clone Nginx Proxy Manager Project
+## 🔄 Updating Your Existing Container & System
+
+### Step 1: Update Host System Packages (Optional)
 ```bash
-git clone https://github.com/BoroloxCom/nginxproxymanager-dc.git
-cd nginxproxymanager-dc/
+sudo apt update && sudo apt upgrade -y
 ```
 
----
-
-## 4. Configure Docker Compose
-Edit the `docker-compose.yml` file if needed:
+### Step 2: Navigate to Project Directory
 ```bash
-nano docker-compose.yml
+cd NginxProxyManager/   # or /opt/nginx-proxy-manager
 ```
 
----
-
-## 5. Deploy Nginx Proxy Manager
+### Step 3: Pull Latest Docker Images
+Fetch the newest image build for Nginx Proxy Manager:
 ```bash
 docker compose pull
+```
+
+### Step 4: Re-create Container with Updates
+Restart container with updated images (minimal downtime):
+```bash
 docker compose up -d
 ```
 
-Check running containers:
+### Step 5: Clean Up Old Docker Images (Optional)
+Remove redundant old Docker image layers to free up server disk space:
 ```bash
-docker ps -a
+docker image prune -f
 ```
 
 ---
 
-## 6. Restart / Re-deploy (if needed)
-```bash
-sudo -i
-cd nginxproxymanager-dc/
-docker compose pull
-docker compose up -d
-exit
+## 📤 Auto Upload Changes (Windows)
+To quickly stage, commit, and push any repository updates to GitHub:
+```cmd
+upload.bat "Your commit message here"
 ```
 
 ---
 
-## ✅ Access Nginx Proxy Manager
-Once containers are running, open your browser and go to:
+## 💾 Data Persistence & Safety
+All configuration settings, custom proxy hosts, users, and Let's Encrypt SSL certificates are stored in host volumes:
+- `./data` - Web proxy configuration & database files
+- `./letsencrypt` - SSL Certificates and renewal data
+
+Updating, stopping, or recreating containers **will NOT lose any data**.
+
+---
+
+## ✅ Access Nginx Proxy Manager Web UI
+
+Once the container is running, open your web browser and navigate to:
 
 ```
 http://<your-server-ip>:81
 ```
 
-Default login:
+**Default Credentials:**
 - **Email:** `admin@example.com`
 - **Password:** `changeme`
 
-
-
-Would you like me to also add a **section on persistent data volumes** so your Nginx Proxy Manager settings survive container restarts?
-
+> ⚠️ *Note: You will be prompted to change your email and password immediately after your first login.*

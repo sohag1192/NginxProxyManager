@@ -4,7 +4,7 @@ set -e
 # Ensure the script is run with sudo privileges
 if [ "$EUID" -ne 0 ]; then
   echo "Please run as root or with sudo"
-  exit
+  exit 1
 fi
 
 echo "Updating Debian system packages..."
@@ -36,7 +36,6 @@ cd "$NPM_DIR"
 
 echo "Generating docker-compose.yml..."
 cat <<EOF > docker-compose.yml
-version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -61,7 +60,7 @@ echo "======================================================="
 echo "Access the Admin UI at: http://<your-server-ip>:81"
 echo ""
 echo "Default Login Credentials:"
-echo "Email:    sohag1192@gmail.com"
+echo "Email:    admin@example.com"
 echo "Password: changeme"
 echo "======================================================="
 echo "Note: You will be prompted to change these immediately upon first login."
