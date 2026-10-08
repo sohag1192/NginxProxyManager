@@ -100,6 +100,25 @@ Remove redundant old Docker image layers to free up server disk space:
 docker image prune -f
 ```
 
+### Step 6: Log Management & Deleting Old Logs
+Log files in Nginx Proxy Manager are stored in `./data/logs/` and Docker container outputs.
+
+#### Option 1: Run the `clean-logs.sh` script (Manual Clean)
+Run the built-in script to instantly clean and truncate all log files:
+```bash
+chmod +x clean-logs.sh
+sudo ./clean-logs.sh
+```
+
+#### Option 2: Automatic Log Rotation (Pre-configured)
+Log rotation is pre-configured in `docker-compose.yml` (`max-size: 10m`, `max-file: 3`), capping Docker container log size to 30MB maximum.
+
+#### Option 3: Weekly Automated Cleanup (Cron Job)
+To automatically clean logs every Sunday at midnight, run `crontab -e` and add:
+```cron
+0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1
+```
+
 ---
 
 ## 📤 Auto Upload Changes (Windows)
@@ -222,6 +241,25 @@ docker compose up -d
 ডিস্ক স্পেস খালি করতে পুরাতন ডকার ইমেজ রিমুভ করুন:
 ```bash
 docker image prune -f
+```
+
+### ধাপ ৬: লগ ম্যানেজমেন্ট এবং পুরাতন লগ ডিলিট করার নিয়ম
+Nginx Proxy Manager এর লগসমূহ `./data/logs/` ফোল্ডার এবং ডকার কনটেইনারে জমা হয়।
+
+#### পদ্ধতি ১: `clean-logs.sh` স্ক্রিপ্ট ব্যবহার করে (ম্যানুয়াল ক্লিন)
+বিল্ট-ইন স্ক্রিপ্ট চালিয়ে সাথে সাথে সব লগ পরিষ্কার করুন:
+```bash
+chmod +x clean-logs.sh
+sudo ./clean-logs.sh
+```
+
+#### পদ্ধতি ২: অটোমেটিক লগ রোটেশন (পূর্ব-কনফিগার করা)
+`docker-compose.yml` এ `max-size: 10m` এবং `max-file: 3` সেট করা আছে, যা ডকার কনটেইনারের মোট লগ সাইজ সর্বোচ্চ ৩০ মেগাবাইটে সীমাবদ্ধ রাখবে।
+
+#### পদ্ধতি ৩: সাপ্তাহিক অটোমেটিক ক্রন জব (Cron Job)
+প্রতি সপ্তাহের রবিবারে স্বয়ংক্রিয়ভাবে লগ পরিষ্কার করার জন্য `crontab -e` ওপেন করে নিচের লাইনটি যুক্ত করুন:
+```cron
+0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1
 ```
 
 ---

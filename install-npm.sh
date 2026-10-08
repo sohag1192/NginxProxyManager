@@ -48,6 +48,11 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
 EOF
 
 echo "Starting Nginx Proxy Manager container..."
