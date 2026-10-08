@@ -70,7 +70,7 @@ docker ps -a
 
 ---
 
-## 🔄 Updating Your Existing Container & System
+## 🔄 Updating & Maintenance
 
 ### Step 1: Update Host System Packages (Optional)
 ```bash
@@ -100,23 +100,37 @@ Remove redundant old Docker image layers to free up server disk space:
 docker image prune -f
 ```
 
-### Step 6: Log Management & Deleting Old Logs
+---
+
+## 🧹 Log Management & Deleting Old Logs
+
 Log files in Nginx Proxy Manager are stored in `./data/logs/` and Docker container outputs.
 
-#### Option 1: Run the `clean-logs.sh` script (Manual Clean)
-Run the built-in script to instantly clean and truncate all log files:
+### Method 1: Instant Manual Cleanup (`clean-logs.sh`)
+Run the included helper script to instantly truncate all active logs and clear container logs:
 ```bash
 chmod +x clean-logs.sh
 sudo ./clean-logs.sh
 ```
 
-#### Option 2: Automatic Log Rotation (Pre-configured)
-Log rotation is pre-configured in `docker-compose.yml` (`max-size: 10m`, `max-file: 3`), capping Docker container log size to 30MB maximum.
+### Method 2: Automatic Docker Log Rotation (Built-in)
+Log rotation is pre-configured in `docker-compose.yml` (`max-size: 10m`, `max-file: 3`), automatically capping total Docker container log size at 30MB.
 
-#### Option 3: Weekly Automated Cleanup (Cron Job)
-To add a weekly cron job automatically (runs every Sunday at midnight) using a single command:
+### Method 3: One-Line Weekly Cron Job (Automated Scheduled Cleanup)
+
+#### Option A: Run `clean-logs.sh` every Sunday at midnight
 ```bash
 (crontab -l 2>/dev/null | grep -v "clean-logs.sh"; echo "0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1") | crontab -
+```
+
+#### Option B: Direct `find & delete` logs older than 7 days
+```bash
+(crontab -l 2>/dev/null | grep -v "data/logs"; echo "0 0 * * 0 find /opt/nginx-proxy-manager/data/logs/ -type f -name '*.log*' -mtime +7 -delete") | crontab -
+```
+
+#### Verify active Cron Jobs:
+```bash
+crontab -l
 ```
 
 ---
@@ -243,23 +257,37 @@ docker compose up -d
 docker image prune -f
 ```
 
-### ধাপ ৬: লগ ম্যানেজমেন্ট এবং পুরাতন লগ ডিলিট করার নিয়ম
+---
+
+## 🧹 লগ ম্যানেজমেন্ট এবং পুরাতন লগ ডিলিট করার নিয়ম
+
 Nginx Proxy Manager এর লগসমূহ `./data/logs/` ফোল্ডার এবং ডকার কনটেইনারে জমা হয়।
 
-#### পদ্ধতি ১: `clean-logs.sh` স্ক্রিপ্ট ব্যবহার করে (ম্যানুয়াল ক্লিন)
+### পদ্ধতি ১: `clean-logs.sh` স্ক্রিপ্ট ব্যবহার করে (ম্যানুয়াল ক্লিন)
 বিল্ট-ইন স্ক্রিপ্ট চালিয়ে সাথে সাথে সব লগ পরিষ্কার করুন:
 ```bash
 chmod +x clean-logs.sh
 sudo ./clean-logs.sh
 ```
 
-#### পদ্ধতি ২: অটোমেটিক লগ রোটেশন (পূর্ব-কনফিগার করা)
+### পদ্ধতি ২: অটোমেটিক লগ রোটেশন (পূর্ব-কনফিগার করা)
 `docker-compose.yml` এ `max-size: 10m` এবং `max-file: 3` সেট করা আছে, যা ডকার কনটেইনারের মোট লগ সাইজ সর্বোচ্চ ৩০ মেগাবাইটে সীমাবদ্ধ রাখবে।
 
-#### পদ্ধতি ৩: সাপ্তাহিক অটোমেটিক ক্রন জব (Cron Job)
-প্রতি সপ্তাহের রবিবারে স্বয়ংক্রিয়ভাবে লগ পরিষ্কারের জন্য এক লাইনের এই কমান্ডটি রান করুন:
+### পদ্ধতি ৩: এক লাইনের অটোমেটিক ক্রন জব (সাপ্তাহিক লগ ক্লিন)
+
+#### অপশন A: প্রতি রবিবার রাতে `clean-logs.sh` চালু করার ক্রন জব:
 ```bash
 (crontab -l 2>/dev/null | grep -v "clean-logs.sh"; echo "0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1") | crontab -
+```
+
+#### অপশন B: সরাসরি ৭ দিনের পুরোনো লগ ডিলিট করার ক্রন জব:
+```bash
+(crontab -l 2>/dev/null | grep -v "data/logs"; echo "0 0 * * 0 find /opt/nginx-proxy-manager/data/logs/ -type f -name '*.log*' -mtime +7 -delete") | crontab -
+```
+
+#### সক্রিয় Cron Job চেক করার কমান্ড:
+```bash
+crontab -l
 ```
 
 ---
