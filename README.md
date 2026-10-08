@@ -114,9 +114,9 @@ sudo ./clean-logs.sh
 Log rotation is pre-configured in `docker-compose.yml` (`max-size: 10m`, `max-file: 3`), capping Docker container log size to 30MB maximum.
 
 #### Option 3: Weekly Automated Cleanup (Cron Job)
-To automatically clean logs every Sunday at midnight, run `crontab -e` and add:
-```cron
-0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1
+To add a weekly cron job automatically (runs every Sunday at midnight) using a single command:
+```bash
+(crontab -l 2>/dev/null | grep -v "clean-logs.sh"; echo "0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1") | crontab -
 ```
 
 ---
@@ -257,9 +257,9 @@ sudo ./clean-logs.sh
 `docker-compose.yml` এ `max-size: 10m` এবং `max-file: 3` সেট করা আছে, যা ডকার কনটেইনারের মোট লগ সাইজ সর্বোচ্চ ৩০ মেগাবাইটে সীমাবদ্ধ রাখবে।
 
 #### পদ্ধতি ৩: সাপ্তাহিক অটোমেটিক ক্রন জব (Cron Job)
-প্রতি সপ্তাহের রবিবারে স্বয়ংক্রিয়ভাবে লগ পরিষ্কার করার জন্য `crontab -e` ওপেন করে নিচের লাইনটি যুক্ত করুন:
-```cron
-0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1
+প্রতি সপ্তাহের রবিবারে স্বয়ংক্রিয়ভাবে লগ পরিষ্কারের জন্য এক লাইনের এই কমান্ডটি রান করুন:
+```bash
+(crontab -l 2>/dev/null | grep -v "clean-logs.sh"; echo "0 0 * * 0 /opt/nginx-proxy-manager/clean-logs.sh >/dev/null 2>&1") | crontab -
 ```
 
 ---
